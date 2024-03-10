@@ -1,8 +1,8 @@
 ---
 title: "COMP4010 - Week 1"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 date: "2024-02-20"
 ---
 
@@ -12,19 +12,22 @@ date: "2024-02-20"
 
 ## Task 1.
 
--   Data:
--   Mapping:
--   Statistical transformation:
--   Geometric object:
--   Position adjustment:
--   Scale:
--   Coordinate system:
--   Faceting:
+-   Data: time, geographical location (cities), temperature, weather, number of troops, march direction.
+-   Mapping: the numbers of men present are mapped to the widths of the colored zones. Red denotes men entering Russia, black denotes those leaving it. The latitude and longitude of city locations are mapped to the x and y axes.
+-   Statistical transformation: Identity.
+-   Geometric object: 2D colored zones, lines, text.
+-   Position adjustment: None
+-   Scale: the color scale consists of red for entering men and black for leaving men. 
+-   Coordinate system: Map projection.
+-   Faceting: None.
 
 ## Task 2.
 
 ```{r}
 # Your code here
+library(ggplot2)
+ggplot(data = mtcars, aes(x = hp, y = mpg)) + geom_point()
+
 
 ```
 
@@ -32,6 +35,9 @@ date: "2024-02-20"
 
 ```{r}
 # Your code here
+ggplot(data = iris, aes(x = Petal.Length, y = Petal.Width)) + geom_point()
+ggplot(data = iris, aes(x = Species, fill = Species)) + geom_bar()
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_line()
 
 ```
 

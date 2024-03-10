@@ -73,7 +73,17 @@ ggplot(
 
 ```{r}
 # YOUR CODE HERE
-
+ggplot(
+  data = mean_area_decade,
+  mapping = aes(x = mean_area, y = decade_built_cat)
+) +
+  geom_segment(aes(x = 0, xend = mean_area, y = decade_built_cat, yend = decade_built_cat)) +
+  geom_point() +
+  labs(
+    x = "Mean area (square feet)", y = "Decade built",
+    title = "Mean area of houses, by decade built"
+  ) + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -94,10 +104,10 @@ df_bed <- df |>
 
 ```{r}
 # YOUR CODE HERE
-
-
-
-
+ggplot(data = df_bed, aes(x = beds, fill = beds)) + geom_bar() +
+labs(x = "Number of bedrooms", y = "Count",
+title = "Distribution of the number of bedrooms") + 
+theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ## TASK 3. Visualizing the distribution of the number of bedrooms by the decade in which the property was built
@@ -107,7 +117,10 @@ Stacked bar chart (number of bedrooms by the decade built):
 ```{r}
 # YOUR CODE HERE
 
-
+ggplot(data = df_bed, aes(x = decade_built_cat, fill = beds)) + geom_bar() +
+labs(x = "Decade built", y = "Properties sold",
+title = "Distribution of the number of bedrooms by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
@@ -117,7 +130,10 @@ Dodged bar chart (number of bedrooms by the decade built):
 ```{r}
 # YOUR CODE HERE
 
-
+ggplot(data = df_bed, aes(x = decade_built_cat, fill = beds)) + geom_bar(position = "dodge") +
+labs(x = "Decade built", y = "Properties sold",
+title = "Distribution of the number of bedrooms by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
@@ -126,7 +142,10 @@ Relative frequency bar chart (number of bedrooms by the decade built):
 
 ```{r}
 # YOUR CODE HERE
-
+ggplot(data = df_bed, aes(x = decade_built_cat, fill = beds)) + geom_bar(position = "fill") +
+labs(x = "Decade built", y = "Properties sold",
+title = "Distribution of the number of bedrooms by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -147,7 +166,10 @@ Bar chart (mean area by decade built):
 ```{r}
 # YOUR CODE HERE
 
-
+ggplot(data = mean_area_decade, aes(x = decade_built_cat, y = mean_area)) + geom_bar(stat = "identity") +
+labs(x = "Decade built", y = "Mean area",
+title = "Mean area by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
@@ -157,6 +179,10 @@ Box plot (area by decade built):
 ```{r}
 # YOUR CODE HERE
 
+ggplot(data = df, aes(x = decade_built_cat, y = area)) + geom_boxplot() +
+labs(x = "Decade built", y = "Area",
+     title = "Distribution of area by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 
@@ -167,7 +193,10 @@ Violin plot (area by decade built):
 ```{r}
 # YOUR CODE HERE
 
-
+ggplot(data = df, aes(x = decade_built_cat, y = area)) + geom_violin() +
+labs(x = "Decade built", y = "Area",
+     title = "Distribution of area by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
@@ -179,7 +208,10 @@ set.seed(4010)
 
 # YOUR CODE HERE
 
-
+ggplot(data = df, aes(x = decade_built_cat, y = area)) + geom_jitter(alpha = 0.3) +
+labs(x = "Decade built", y = "Area",
+     title = "Distribution of area by decade") + 
+theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
