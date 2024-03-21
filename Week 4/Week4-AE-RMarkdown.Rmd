@@ -1,0 +1,132 @@
+---
+title: "COMP4010 - Week 4"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-03-14"
+---
+
+# Week 4
+
+# Application Exercises
+
+```{r}
+library(tidyverse)
+library(ggwaffle)
+library(emojifont)
+df <- read.csv("worldometer_data.csv", na.strings = "") #Other people didn't seem to need the na.strings argument. Weird.
+```
+
+
+## Task 1.
+
+```{r}
+ggplot(
+  data = df,
+  mapping = aes(x = TotalCases, y = TotalDeaths, color = Continent)
+) +
+geom_point() +
+labs(
+  x = "Total Cases", y = "Total Deaths",
+  title = "Total Cases vs Total Deaths"
+) +
+theme(plot.title = element_text(hjust = 0.5))
+```
+
+There's a positive correlation between the two variables - more total cases usually leads to higher death tolls. The extreme outliers seem to portray a linear relationship between the variables, while the remaining points seem to point towards something closer to an exponential function, although this is not clear due to cluttering and the two axes using different scales.
+
+## Task 2.
+
+```{r}
+ggplot(
+  data = df,
+  mapping = aes(x = TotalCases, y = TotalDeaths, color = Continent, scale(l))
+  ) +
+  geom_point() +
+  scale_x_continuous(trans='log10') +
+  scale_y_continuous(trans='log10') + 
+  labs(
+    x = "Total Cases", y = "Total Deaths",
+    title = "Total Cases vs Total Deaths"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Before transforming the scale, a small number of outliers led to all other points being cluttered, making it hard to view the relationship between the two variables; the difference between the scales used for each axis also seems to exaggerate the relationship between total cases and total deaths. Using log scale brings the outliers closer the remaining data points, allowing the plot to clearly visualize the linear relationship between the variables.     
+
+## Task 3.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() + 
+  theme_waffle() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+Africa has the largest number of countries. Asia and Europe follow closely behind with 1 fewer country. Oceania has the fewest country by far with only 6.
+
+## Task 4. 
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() + 
+  theme_waffle() +
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+## Task 5.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() +
+  theme_waffle() +
+  scale_fill_viridis_d(option='turbo')+
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "top")
+
+```   
+
+## Task 6.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+waffle_data$label = fontawesome('fa-globe')
+
+ggplot(waffle_data, aes(x, y, colour = group)) + 
+  geom_text(aes(label=label), family='fontawesome-webfont', size=7) +
+  theme_waffle() +
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "top")
+
+
+```
+
+

@@ -1,0 +1,130 @@
+---
+title: "COMP4010 - Week 4"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-03-14"
+---
+
+# Week 4
+
+# Application Exercises
+
+```{r}
+library(tidyverse)
+library(ggwaffle)
+library(emojifont)
+df <- read.csv("worldometer_data.csv", na.strings = "")
+```
+
+
+## Task 1.
+
+```{r}
+ggplot(
+  data = df,
+  mapping = aes(x = TotalCases, y = TotalDeaths, color = Continent)
+) +
+geom_point() +
+labs(
+  x = "Total Cases", y = "Total Deaths",
+  title = "Total Cases vs Total Deaths"
+) +
+theme(plot.title = element_text(hjust = 0.5))
+```
+
+There's a positive correlation between the two variables.
+## Task 2.
+
+```{r}
+ggplot(
+  data = df,
+  mapping = aes(x = TotalCases, y = TotalDeaths, color = Continent, scale(l))
+  ) +
+  geom_point() +
+  scale_x_continuous(trans='log10') +
+  scale_y_continuous(trans='log10') + 
+  labs(
+    x = "Total Cases", y = "Total Deaths",
+    title = "Total Cases vs Total Deaths"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+Using log scale brings the outliers closer to the remaining data points.
+
+## Task 3.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() + 
+  theme_waffle() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+Africa has the largest number of countries. Asia and Europe follow closely behind with 1 fewer country. Oceania has the fewest country by far with only 6.
+
+## Task 4. 
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() + 
+  theme_waffle() +
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+## Task 5.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+ggplot(waffle_data, aes(x, y, fill = group)) + 
+  geom_waffle() +
+  theme_waffle() +
+  scale_fill_viridis_d(option='turbo')+
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "top")
+
+```   
+
+## Task 6.
+
+```{r}
+
+waffle_data <- waffle_iron(df, aes_d(group = Continent))
+
+waffle_data$label = fontawesome('fa-globe')
+
+ggplot(waffle_data, aes(x, y, colour = group)) + 
+  geom_text(aes(label=label), family='fontawesome-webfont', size=7) +
+  theme_waffle() +
+  coord_equal() +
+  labs(
+    title = "Worldometer by Continent"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "top")
+
+
+```
+
+

@@ -1,5 +1,9 @@
 ---
----
+title: "COMP4010 - Week 2"
+output:
+  pdf_document: default
+  html_document: default
+date: "2024-02-28"
 ---
 
 # Week 2
