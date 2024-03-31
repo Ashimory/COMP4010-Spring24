@@ -1,6 +1,8 @@
 ---
 title: "Week6-AE-RMarkdown"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-03-27"
 ---
 
@@ -28,7 +30,12 @@ In order to recreate this visualization we need to first reshape the data to hav
 
 ```{r}
 # YOUR CODE HERE
-
+staff_long <- staff %>% 
+  pivot_longer(
+    cols = -faculty_type, 
+    names_to = "year", 
+    values_to = "value"
+  )
 ```
 
 # Task 2: Attempt to recreate the original bar chart as best as you can.
@@ -45,7 +52,14 @@ Don’t worry about theming or color palettes right now. The most important aspe
 
 ```{r}
 # YOUR CODE HERE
-
+ggplot(staff_long, aes(x = value, y = faculty_type, fill = as.factor(year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_brewer(palette = "Paired") +
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 45), breaks = seq(5, 45, by = 5)) +
+  scale_y_discrete() +
+  labs(x = "Percentage of Instructional Staff Employees", y = "Faculty Type", fill = "Year") +
+  theme(legend.position = "right")
+```
 ```
 
 # Let’s make it better
