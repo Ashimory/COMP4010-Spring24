@@ -93,9 +93,9 @@ ggplot(df_2118, aes(x = "", y = pct, fill = college)) +
   theme(axis.title = element_blank()) +
   labs(title = "Percentage of Enrolled Students by College in 2118")
 ```
+Both charts convey the information effectively, but the bar chart makes it easier to compare magnitudes, making it preferable.
 
 ## Task 4.
-
 
 ```{r}
 file_list <- list.files(pattern = "Viet Nam-")
@@ -104,18 +104,23 @@ for (file in file_list){
   file_df = read.csv(file)
   year = substring(file, 10, 13)
   file_df$Age <- factor(file_df$Age, levels = c("0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", "95-99", "100+"))
-  total <- (sum(file_df$M) + sum(file_df$F))
-  file_df$M <- file_df$M * (-1) / total
-  file_df$F <- file_df$F / total
-  plot <- ggplot(file_df, aes(x = Age)) + 
-    geom_bar(aes(y = M), stat = "identity", fill = "#112e80") + 
-    geom_text(aes(y = M, label = scales::percent(abs(M))), hjust = 1.25) + 
-    geom_bar(aes(y = F), stat = "identity", fill = "#109466") +
-    geom_text(aes(y = F, label = scales::percent(F)), hjust = -0.25) + 
+  file_df <- file_df%>% 
+  pivot_longer(
+    cols = c("M","F"), 
+    names_to = "Sex", 
+    values_to = "Population"
+  )
+  file_df$Population = file_df$Population / sum(file_df$Population)
+  
+  
+  plot <- ggplot(file_df, aes(x = Age, y = ifelse(Sex == "F", Population, Population * -1))) + 
+    geom_bar(aes(fill = Sex), stat = "identity") + 
+    geom_text(aes(hjust = ifelse(Sex == "M", 1.25, -0.25), label = scales::percent(abs(Population)))) +
     scale_y_continuous(
-    labels = abs, 
-    limits = max(min(file_df$M) * -1, max(file_df$F)) * c(-1.25, 1.25)
+    labels = abs,
+    limits = max(file_df$Population) * c(-1.25, 1.25)
     ) +
+    scale_fill_manual(labels = c("Female", "Male"), values = c("#109466", "#112e80"), name = "Gender") +
     theme_vinuni() +
     theme(panel.grid.major.y = element_blank()) +
     labs(x = "Age Group", y = "Percentage of Total Population",
@@ -125,6 +130,36 @@ for (file in file_list){
   print(plot)
 }
 ```
+
+The population pyramid provides how the population is distributed by age, which allows insights into things like percentage of dependents (senior citizens and children) and gender ratio. Comparing the pyramid over time tells us the mortality and fertility rates.looking at the 11 charts above tells us that Vietnam has an aging population, which is related to lower fertility and mortality rates. There are multiple possible causes, including higher quality of life and people's tendency to have fewer children later for reasons such as chasing their careers.
+
+## Task 5.
+
+```{r}
+file_list <- list.files(pattern = "Viet Nam-")
+total_df = data.frame(Year = c(), Population = c(), stringsAsFactors = FALSE)
+for (file in file_list){
+  file_df = read.csv(file)
+  year = substring(file, 10, 13)
+  total_df <- rbind(total_df, data.frame(Year = year, Population = sum(file_df$M) + sum(file_df$F)))
+}
+ggplot(total_df, aes(x = Year, y = Population, group = 1)) +
+  geom_line(aes(color = "a"), data = subset(total_df, Year <= 2020), linetype = 1) +
+  geom_line(aes(color = "b"), data = subset(total_df, Year >= 2020), linetype = 2) +
+  geom_point(color = "blue") + 
+  labs(x = "Year", y = "Total Population",
+  title = paste("Population Pyramid of Viet Nam - ", year)) + 
+  scale_color_manual(values = c("a" = "blue", "b" = "red"))
+```
+
+## Task 6.
+
+![The moon's gravitational pull, mapped with a rainbow scale by [NASA](https://svs.gsfc.nasa.gov/cgi-bin/details.cgi?aid=4014). This map allows scientists to learn about the moon's structure. It reveals geographical features such as craters or volcanic landforms, and provides insights regarding potential subsurface features.](g-05-bad-rainbow.jpg)
+
+Despite the amount of information that can be learned from the gravity map, this visualization suffers from a poor choice of color scale. First of all, the lack of a legend makes it unclear whether red or blue shades are associated with higher gravity. In heatmaps, warm colors are used to represent higher magnitude, but this is not always the case for all visualizations. Another glaring issue with the rainbow color scale is accessibility. In particular, colorblindness can severely interfere with one's ability to interpret the visualization. Even without colorblindness, the usage of a wide range of colors makes it difficult for viewers to distinguish between different gravity levels and compare regions. Compared to the rainbow scale, another color scheme such as grayscale may make it easier to perceive the dfferent gravity levels in the map.
+
+
+
 
 
 
