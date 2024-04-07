@@ -1,6 +1,8 @@
 ---
 title: "Week7-AE-RMarkdown"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-03-27"
 ---
 
@@ -18,6 +20,9 @@ library(ggtext)
 ```
 ```{r}
 # CO2 emissions data is mostly NULL from 2021 onwards...
+
+indicators = c("SP.POP.TOTL", "EN.ATM.CO2E.PC", "NY.GDP.PCAP.KD")
+
 wdi_co2_raw <- WDI(country = "all", indicators, extra = TRUE, 
                    start = 1995, end = 2023)
 ```
@@ -50,7 +55,10 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
+# seems like we only need the ranking columns
+co2_rankings <- subset(co2_rankings, select = c("iso3c", "country", "region", "income", "ranking", "year"))
 
+co2_rankings <- reshape(co2_rankings, v.names = c("ranking"), idvar = "iso3c", timevar = "year", direction = "wide", sep = "_")
 
 ```
 
@@ -59,8 +67,14 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
+# Assuming the difference is between 1995 and 2020, based on the later tasks.
+co2_rankings$rank_diff <- co2_rankings$ranking_2020 - co2_rankings$ranking_1995
 
-
+co2_rankings <- co2_rankings %>% mutate(significant_diff = case_when(
+  rank_diff > 30 ~ "Significant decrease",
+  rank_diff < -30 ~ "Significant increase",
+  .default = "Insignificant change"
+))
 ```
 
 
@@ -68,7 +82,13 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
-
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020)) +
+  geom_point() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  )
 
 ```
 
@@ -77,7 +97,15 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
-
+#points above the line => decreased rank, points below the line => increased rank, points on the line => maintained rank
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020)) +
+  geom_point() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  ) +
+  annotate("segment", x = 0, xend = 175, y = 0, yend = 175, colour = "blue")
 
 ```
 
@@ -86,7 +114,20 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
+co2_rankings <- co2_rankings %>% mutate(name_label = case_when(
+  rank_diff > 30 | rank_diff < - 30 ~ co2_rankings$country,
+  .default = ""
+))
 
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020, color = significant_diff, label = name_label)) +
+  geom_point() +
+  geom_text_repel() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  ) +
+  annotate("segment", x = 0, xend = 175, y = 0, yend = 175, colour = "blue")
 
 ```
 
@@ -95,7 +136,22 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
+co2_rankings <- co2_rankings %>% mutate(name_label = case_when(
+  rank_diff > 30 | rank_diff < - 30 ~ co2_rankings$country,
+  .default = ""
+))
 
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020, color = significant_diff, label = name_label)) +
+  geom_point() +
+  geom_text_repel() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  ) +
+  annotate("segment", x = 0, xend = 175, y = 0, yend = 175, colour = "blue") +
+  annotate("text", x = 30, y = 160, label = "Countries worsening") +
+  annotate("text", x = 150, y = 30, label = "Countries improving") 
 
 ```
 
@@ -104,7 +160,23 @@ co2_rankings <- wdi_clean |>
 ```{R}
 # YOUR CODE HERE
 
+co2_rankings <- co2_rankings %>% mutate(name_label = case_when(
+  rank_diff > 30 | rank_diff < - 30 ~ co2_rankings$country,
+  .default = ""
+))
 
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020, color = significant_diff, label = name_label)) +
+  geom_point() +
+  geom_text_repel() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  ) +
+  annotate("segment", x = 0, xend = 175, y = 0, yend = 175, colour = "blue") +
+  annotate("text", x = 30, y = 160, label = "Countries worsening") +
+  annotate("text", x = 150, y = 30, label = "Countries improving") +
+  scale_color_manual(values = c("gray", "red", "darkgreen"))
 
 ```
 
@@ -113,6 +185,29 @@ co2_rankings <- wdi_clean |>
 ```{r}
 # YOUR CODE HERE
 
+co2_rankings <- co2_rankings %>% mutate(name_label = case_when(
+  rank_diff > 30 | rank_diff < - 30 ~ co2_rankings$country,
+  .default = ""
+))
+
+ggplot(co2_rankings, aes(x = ranking_1995, y = ranking_2020, color = significant_diff, label = name_label)) +
+  geom_point() +
+  geom_text_repel() +
+  labs(
+    x = "Rank in 1995",
+    y = "Rank in 2020",
+    title = "Changes in CO2 emission rankings between 1995 and 2020"
+  ) +
+  annotate("segment", x = 0, xend = 175, y = 0, yend = 175, colour = "blue") +
+  annotate("text", x = 30, y = 160, label = "Countries worsening") +
+  annotate("text", x = 150, y = 30, label = "Countries improving") +
+  annotate("rect", xmin = 0, xmax = 25, ymin = 0, ymax = 25, alpha = .2) +
+  annotate("segment", x = 50, xend = 25, y = 13, yend = 13, size = 1.5, arrow = arrow()) +
+  annotate("text", x = 71, y = 13, label = "Lowest emitters") +
+  annotate("rect", xmin = 148, xmax = 173, ymin = 148, ymax = 173, alpha = .2) +
+  annotate("segment", x = 125, xend = 150, y = 160, yend = 160, size = 1.5, arrow = arrow()) +
+  annotate("text", x = 123, y = 174, label = "Highest emitters") +
+  scale_color_manual(values = c("gray", "red", "darkgreen")) 
 
 
 ```
