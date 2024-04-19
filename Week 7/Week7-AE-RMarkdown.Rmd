@@ -16,7 +16,7 @@ library(WDI)
 #install.packages('ggrepel')
 library(ggrepel)
 #install.packages('ggtext')
-library(ggtext) 
+library(ggtext)
 ```
 ```{r}
 # CO2 emissions data is mostly NULL from 2021 onwards...
