@@ -1,6 +1,8 @@
 ---
 title: "Week9-AE-RMarkdown"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-03-27"
 ---
 
@@ -54,8 +56,14 @@ nurses_subset |>
 # Task 1. Add alt text to line chart
 ```{r}
 # Your label here
+#| label: nurses-salary
 # Your caption here
+#| fig-cap: "Annual median salary of Registered Nurses"
 # Your alt text here
+#| fig-alt: "The figure is a line chart titled 'Annual median salary of Registered Nurses' that displays #| the median salary of registered nurses in three states
+#| (California, New York, and North Carolina) from 1998 to 2020. In each state, the
+#| median salary of registered nurses increase over time. The following numbers are
+#| all approximate. California nurses have the highest median salary, starting from $50K in 1998 to nearly $120K in 2020. Behind them are New York nurses, whose median salary rose from around $49K to $90K over the period. Nurses in North Carolina have the lowest median salary, going from $39K in 1998 to $67K in 2020."
 
 nurses_subset |>
   ggplot(aes(x = year, y = annual_salary_median, color = state)) +
@@ -78,16 +86,54 @@ Create a version of the same line chart but using direct labels instead of legen
 You can achieve this with just `geom_text()` but you can also check out https://r-graph-gallery.com/web-line-chart-with-labels-at-end-of-line.html for a fancier way of achieving this.
 
 ```{r}
-# YOUR CODE HERE
 
+library(ggrepel)
+
+# YOUR CODE HERE
+# Your label here
+#| label: nurses-salary
+# Your caption here
+#| fig-cap: "Annual median salary of Registered Nurses"
+# Your alt text here
+#| fig-alt: "The figure is a line chart titled 'Annual median salary of Registered Nurses' that displays #| the median salary of registered nurses in three states
+#| (California, New York, and North Carolina) from 1998 to 2020. In each state, the
+#| median salary of registered nurses increase over time. The following numbers are
+#| all approximate. California nurses have the highest median salary, starting from $50K in 1998 to nearly $120K in 2020. Behind them are New York nurses, whose median salary rose from around $49K to $90K over the period. Nurses in North Carolina have the lowest median salary, going from $39K in 1998 to $67K in 2020."
+
+nurses_subset %>%
+  mutate(labels = ifelse(year == 2020, state, NA))|>
+  ggplot(aes(x = year, y = annual_salary_median, color = state)) +
+  geom_line(show.legend = FALSE) + 
+  geom_text_repel(
+    aes(label = labels),
+    direction = "y",
+    xlim = c(2022, NA),
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .8,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20,
+    show.legend = FALSE
+  ) +
+  scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")) +
+  labs(
+    x = "Year", y = "Annual median salary", color = "State",
+    title = "Annual median salary of Registered Nurses"
+  ) +
+  coord_cartesian(clip = "off") +
+  theme(
+    plot.margin = margin(0.1, 0.9, 0.1, 0.1, "in")
+    )
 ```
 
 # Task 3. Colorblind-friendly plots
 Use `colorblindr` for colorblind-friendly palettes.
 ```{r}
-#remotes::install_github("wilkelab/cowplot")
-#install.packages("colorspace", repos = "http://R-Forge.R-project.org")
-#remotes::install_github("clauswilke/colorblindr")
+# remotes::install_github("wilkelab/cowplot")
+# install.packages("colorspace", repos = "http://R-Forge.R-project.org")
+# remotes::install_github("clauswilke/colorblindr")
 library(colorblindr)
 ```
 
@@ -97,33 +143,135 @@ With the line chart from Task 1, create 3 different plots: one with the default 
 
 ```{r}
 # YOUR CODE HERE for default color scale
+# plot <-nurses_subset |>
+#   ggplot(aes(x = year, y = annual_salary_median, color = state)) +
+#   geom_line() +
+#   scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")) +
+#   labs(
+#     x = "Year", y = "Annual median salary", color = "State",
+#     title = "Annual median salary of Registered Nurses"
+#   ) +
+#   coord_cartesian(clip = "off") +
+#   theme(
+#     plot.margin = margin(0.1, 0.9, 0.1, 0.1, "in")
+#     )
+# cvd_grid(plot)
 
+plot <- nurses_subset %>%
+  mutate(labels = ifelse(year == 2020, state, NA))|>
+  ggplot(aes(x = year, y = annual_salary_median, color = state)) +
+  geom_line(show.legend = FALSE) + 
+  geom_text_repel(
+    aes(label = labels),
+    direction = "y",
+    xlim = c(2022, NA),
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20,
+    show.legend = FALSE
+  ) +
+  scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")) +
+  labs(
+    x = "Year", y = "Annual median salary", color = "State",
+    title = "Annual median salary of Registered Nurses"
+  ) +
+  coord_cartesian(clip = "off") +
+  theme(
+    plot.margin = margin(0.1, 0.9, 0.1, 0.1, "in"),
+    legend.position = "none"
+    )
+cvd_grid(plot)
 ```
 
 What do you think of the default color scale effectiveness for colorblind viewers?
 
 YOUR ANSWER HERE
 
+Not very effective. It's hard to differentiate the lines for California and New York, especially  in the cases of deutanomaly and desaturated.
+
 ---
 
 ```{r}
 # YOUR CODE HERE for viridis color scale
-
+plot <- nurses_subset %>%
+  mutate(labels = ifelse(year == 2020, state, NA))|>
+  ggplot(aes(x = year, y = annual_salary_median, color = state)) +
+  geom_line(show.legend = FALSE) + 
+  geom_text_repel(
+    aes(label = labels),
+    direction = "y",
+    xlim = c(2022, NA),
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20,
+    show.legend = FALSE
+  ) +
+  scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")) +
+  labs(
+    x = "Year", y = "Annual median salary", color = "State",
+    title = "Annual median salary of Registered Nurses"
+  ) +
+  coord_cartesian(clip = "off") +
+  theme(
+    plot.margin = margin(0.1, 0.9, 0.1, 0.1, "in"),
+    legend.position = "none"
+    ) +
+  scale_color_viridis_d()
+cvd_grid(plot)
 ```
 
 What do you think of the viridis color scale effectiveness for colorblind viewers?
 
 YOUR ANSWER HERE
 
+Still quite hard to differentiate between California's line and New York's line; North Carolina is hard to see overall. 
+
 ---
 
 ```{r}
 # YOUR CODE HERE for OkabeIto color scale
-
+plot <- nurses_subset %>%
+  mutate(labels = ifelse(year == 2020, state, NA))|>
+  ggplot(aes(x = year, y = annual_salary_median, color = state)) +
+  geom_line(show.legend = FALSE) + 
+  geom_text_repel(
+    aes(label = labels),
+    direction = "y",
+    xlim = c(2022, NA),
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20,
+    show.legend = FALSE
+  ) +
+  scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")) +
+  labs(
+    x = "Year", y = "Annual median salary", color = "State",
+    title = "Annual median salary of Registered Nurses"
+  ) +
+  coord_cartesian(clip = "off") +
+  theme(
+    plot.margin = margin(0.1, 0.9, 0.1, 0.1, "in"),
+    legend.position = "none"
+    ) +
+  scale_color_OkabeIto()
+cvd_grid(plot)
 ```
 
 What do you think of the OkabeIto color scale effectiveness for colorblind viewers? 
 
 YOUR ANSWER HERE
 
+Easier to differentiate in all cases except perhaps desaturated.
 
