@@ -7,7 +7,7 @@
 
 **Important documentation:** [`ggplot2 annotate()`](https://ggplot2.tidyverse.org/reference/annotate.html)
 
-**Data:** `wdi_co2_raw <- WDI(country = "all", indicators, extra = TRUE, start = 1995, end = 2023)` from the `WDI` library by World Bank.
+**Data:** `wdi_co2_raw <- WDI(country = "all", c("SP.POP.TOTL","EN.ATM.CO2E.PC","NY.GDP.PCAP.KD"), extra = TRUE, start = 1995, end = 2023)` from the `WDI` library by World Bank.
 
 Although this dataset contains up to 2023, the CO2 emissions data is mostly `NA` from 2021 onwards, so we will be using only rows up until 2020. Also, to reduce clutter, let's only consider countries with a population greater than 200,000.
 
@@ -54,37 +54,45 @@ Convert the data frame into wide format to better see the ranking by year.
 
 In this task you will need to prepare the data for further visualization tasks.
 
-- Calculate the difference in rankings and store in a column called `rank_diff`. 
+- Calculate the difference in rankings between any 2 years (e.g. 2020 and 1995) and store in a column called `rank_diff`. 
 - Create a column called `significant_diff` to indicate whether the rank changed by more than 30 positions, and whether it was a significant increase or significant decrease in ranking.
 
 ![Task 2](img/task2.jpg)
 
-## Task 3. Scatter plot for changes in CO2 emission rankings between 1995 and 2020
+## Task 3. Scatter plot for changes in CO2 emission rankings between 1995 and 2020 (or the years you've chosen)
 
-Create a basic plot that visualizes the changes in CO2 emission rankings between 1995 and 2020.
+Create a basic plot that visualizes the changes in CO2 emission rankings between 1995 and 2020 (or the years you've chosen).
 
 ![Task 3](img/task3.png)
 
 # Task 4. Lazy way to show change in rank
 
 Can you come up with the simplest visual element we can use to demonstrate whether a country increased, decreased, or maintained their ranking? You shouldn't need to change the data in any way.
-Add it to your current plot. (You may need to read the [`ggplot2 annotate()`](https://ggplot2.tidyverse.org/reference/annotate.html) documentation).
+Add it to your current plot. (You may need to read the [`ggplot2 annotate()`](https://rfortherestofus.com/2023/10/annotate-vs-geoms) examples).
 
 # Task 5. Highlight significant countries
 
 Add colors to better separate the three groups of countries based on the change in ranking. Use [`geom_label_repel()`](https://r-graph-gallery.com/package/ggrepel.html) from the `ggrepel` library to add the names of the countries which had a significant change in their rank.
 
+![Task 5](img/task5.png)
+
 # Task 6. Additional text annotations
 
 Since our plot is showing the relationship between the ranking of two different years, it essentially divides the plot into two halves. Add text annotations to provide labels for the two halves of the plot, `"Countries improving"` and `"Countries worsening"`.
+
+![Task 6](img/task6.png)
 
 # Task 7. Using colors to redirect attention
 
 Before we added colors to highlight the different classes of countries based on their change in ranking. Now use `scale_color_manual()` to change the color of the insignificant countries to be more *uninteresting*.
 
+![Task 7](img/task7.png)
+
 # Task 8. More geometric annotations
 
 With `annotate()`, use `segment` (with `arrow` parameter) and `rect` to create boxes, arrows, and text labels to highlight region containing the top 25 and bottom 25 ranking countries labelled `"Lowest emitters"` and `"Highest emitters"`.
+
+![Task 8](img/task8.png)
 
 # B. Reading Material
 

@@ -19,6 +19,10 @@ library(ggrepel)
 library(ggtext)
 ```
 ```{r}
+indicators <- c("SP.POP.TOTL",     # Population
+                "EN.ATM.CO2E.PC",  # CO2 emissions
+                "NY.GDP.PCAP.KD")  # GDP per capita
+
 # CO2 emissions data is mostly NULL from 2021 onwards...
 
 indicators = c("SP.POP.TOTL", "EN.ATM.CO2E.PC", "NY.GDP.PCAP.KD")
