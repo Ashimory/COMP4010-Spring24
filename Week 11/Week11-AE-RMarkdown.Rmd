@@ -56,11 +56,11 @@ syr_plot <- syr_2023 |>
   ggplot(aes(x = date, y = aqi_value, group = 1)) +
   # shade in background with colors based on AQI guide
   geom_rect(
-    data = ...,
+    data = aqi_levels,
     aes(
-      ymin = ..., ymax = ...,
-      xmin = ..., xmax = ...,
-      x = ..., y = ..., fill = color
+      ymin = aqi_min, ymax = aqi_max,
+      xmin = as.Date(-Inf), xmax = as.Date(Inf),
+      x = NULL, y = NULL, fill = color
     )
   ) +
   # plot the AQI in Syracuse
@@ -73,7 +73,7 @@ syr_plot
 
 ```{r}
 syr_plot_colored <- syr_plot +
-  ...()
+  scale_fill_identity()
 
 syr_plot_colored
 ```
@@ -97,8 +97,8 @@ syr_plot_labelled <- syr_plot_colored +
   ) +
   # add text labels for each AQI category
   geom_text(
-    data = ...,
-    aes(x = ..., y = aqi_mid, label = level),
+    data = aqi_levels,
+    aes(x = ymd("2024-03-01"), y = aqi_mid, label = level),
     hjust = 1, size = 6, fontface = "bold", color = "white",
     family = "Atkinson Hyperlegible"
   )
@@ -113,7 +113,12 @@ Add a meaningful title, axis labels, caption, etc.
 
 syr_plot_labelled <- syr_plot_labelled +
   theme_minimal() +
-  ...()
+  labs(
+    title = "Ozone and PM2.5 Daily AQI Values",
+    subtitle = "Syracuse, NY",
+    y = "AQI",
+    caption = "Source: EPA Daily Air Quality Tracker"
+  )
 
 syr_plot_labelled
 ```
@@ -163,7 +168,7 @@ freedom_ranked
 ```{r}
 freedom_faceted_plot <- freedom_ranked |>
   # civil liberty vs freedom rank
-  ggplot(aes(x = ..., y = ..., fill = ...)) +
+  ggplot(aes(x = civil_liberty, y = country, fill = is_venezuela)) +
   geom_col(show.legend = FALSE) +
   # change the color palette for emphasis of Venezuela
   scale_fill_manual(values = c("gray", "red")) +
@@ -172,13 +177,13 @@ freedom_faceted_plot <- freedom_ranked |>
   # create explicit labels for civil liberties score,
   # leaving room for country text labels
   scale_x_continuous(
-    limits = ...,
-    breaks = ...
+    limits = c(-5, 7), 
+    breaks = 1:7 
   ) +
   geom_text(
-    hjust = "...",
-    aes(label = ...),
-    x = ...
+    hjust = "left", #check back
+    aes(label = country), #check back
+    x = -5
   ) +
   # remove extraneous theme/label components
   theme(
@@ -205,17 +210,17 @@ freedom_bar_race <- freedom_faceted_plot +
   facet_null() +
   # label the current year in the top corner of the plot
   geom_text(
-    x = ..., y = ...,
-    hjust = "...",
-    aes(label = ...),
-    size = ...
+    x = 7, y = 11, #check
+    hjust = "top",
+    aes(label = year),
+    size = 8 #check
   ) +
   # define group structure for transitions
-  aes(group = ...) +
+  aes(group = year) +
   # temporal transition - ensure integer value for labeling
-  transition_time(...) +
+  transition_time(year) +
   labs(
-    title = "Civil liberties rating, {frame_time}",
+    title = "Civil liberties rating, {as.integer(frame_time)}",
     subtitle = "1: Highest degree of freedom - 7: Lowest degree of freedom"
   )
 
